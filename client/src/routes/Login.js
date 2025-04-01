@@ -1,4 +1,3 @@
-
 import React, { useState} from 'react';
 import { useHistory } from "react-router-dom";
 
@@ -29,7 +28,12 @@ const Login = () => {
       return;
     }
 
-    axios.post(`${process.env.REACT_APP_BASE_URL}:8181/login`, { email })
+    // Use relative URL in production, full URL in development
+    const apiUrl = process.env.NODE_ENV === 'production'
+      ? '/login' // Relative URL in production
+      : `${process.env.REACT_APP_BASE_URL}:8181/login`;
+    
+    axios.post(apiUrl, { email })
       .then(res => {
         console.log(res);
         if(res.data=="Success"){

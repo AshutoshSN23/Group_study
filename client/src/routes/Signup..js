@@ -25,7 +25,12 @@ const Signup = () => {
           return;
         }
 
-        axios.post(`${process.env.REACT_APP_BASE_URL}:8181/register`, {name, email})
+        // Use relative URL in production, full URL in development
+        const apiUrl = process.env.NODE_ENV === 'production'
+          ? '/register' // Relative URL in production
+          : `${process.env.REACT_APP_BASE_URL}:8181/register`;
+        
+        axios.post(apiUrl, {name, email})
         .then(res => {
             console.log(res);
             // navigate('/login')
