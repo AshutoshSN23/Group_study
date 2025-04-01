@@ -1,29 +1,38 @@
 require('dotenv').config();
 const { log } = require('console');
 const express = require("express");
+const http = require("http");
 const https = require("https");
 const app = express();
 const fs = require('fs');
-app.use(express.static(__dirname))
+const path = require('path');
+
+// Serve static files from the React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+} else {
+  app.use(express.static(__dirname));
+}
 
 const mongoose = require('mongoose')
 const cors = require('cors')
 
+let server;
 
-
-const key = fs.readFileSync('cert.key');
-const cert = fs.readFileSync('cert.crt');
-
-const server =  https.createServer({key, cert}, app);
+// Use HTTPS in development, HTTP in production (hosting providers handle SSL)
+if (process.env.NODE_ENV === 'production') {
+  server = http.createServer(app);
+} else {
+  const key = fs.readFileSync('cert.key');
+  const cert = fs.readFileSync('cert.crt');
+  server = https.createServer({key, cert}, app);
+}
 
 const socket = require("socket.io");
 const UserModel = require('./models/user');
 
-
-
 app.use(express.json());
 app.use(cors());
-
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -39,7 +48,6 @@ app.post('/register', (req, res)=>{
     
 })
 
-
 app.post('/login', async(req, res)=>{
     const {email} = req.body;
     UserModel.findOne({email: email})
@@ -51,7 +59,6 @@ app.post('/login', async(req, res)=>{
         }
     })
 })
-
 
 async function getUsernameByEmail(email){
     let userName = "unknown";
@@ -65,8 +72,6 @@ async function getUsernameByEmail(email){
 
     return userName;
 }
-
-
 
 const io = socket(server, {
     cors: {
@@ -192,5 +197,13 @@ io.on('connection', socket => {
     });
 
 });
+
+// In production, serve the React app for any unknown paths
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  });
+}
+
 const PORT = process.env.PORT || 8181;
-server.listen(PORT, "0.0.0.0", () => console.log(`server is running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

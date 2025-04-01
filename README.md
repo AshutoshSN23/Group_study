@@ -95,6 +95,79 @@ json
 
    https://localhost:3000  
 
+## Deployment Guide
+
+This guide will help you deploy the Group Study Platform to free hosting services.
+
+### Prerequisites
+
+1. Create accounts on the following services:
+   - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (for database)
+   - [Render](https://render.com/) (for hosting)
+
+### Step 1: Set Up MongoDB Atlas
+
+1. Sign up for a free MongoDB Atlas account
+2. Create a new cluster (the free tier is sufficient)
+3. Set up a database user with password
+4. Add your IP to the IP Access List (or allow access from anywhere for development)
+5. Get your MongoDB connection string from Atlas dashboard
+
+### Step 2: Deploy to Render
+
+Render offers a generous free tier and is easy to set up:
+
+1. Sign up for a free Render account
+2. From your dashboard, click "New" and select "Web Service"
+3. Connect your GitHub repository (fork this repo to your GitHub account first)
+4. Configure the service:
+   - **Name**: group-study-platform (or any name you prefer)
+   - **Environment**: Node
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Plan**: Free
+
+5. Add the following environment variables:
+   - `NODE_ENV`: production
+   - `MONGO_URI`: Your MongoDB Atlas connection string
+   - `PORT`: 8080 (Render will override this)
+   - `REACT_APP_GEMINI_API_KEY`: Your Gemini API key (if using this feature)
+
+6. Click "Create Web Service"
+
+Render will automatically build and deploy your application. Once deployed, you can access it via the provided URL.
+
+### Alternative Free Hosting Options
+
+#### Railway
+
+1. Create a Railway account
+2. Create a new project and connect your GitHub repository
+3. Add a MongoDB service or connect to your MongoDB Atlas
+4. Configure environment variables similar to Render
+5. Deploy your application
+
+#### Fly.io
+
+1. Sign up for Fly.io
+2. Install the Fly CLI
+3. Run `fly launch` in your project directory
+4. Configure environment variables
+5. Deploy with `fly deploy`
+
+### Updating Your Deployment
+
+After making changes to your code:
+
+1. Push changes to your GitHub repository
+2. Render will automatically redeploy your application
+
+### Troubleshooting
+
+- If your application fails to build, check the build logs in Render
+- Make sure all environment variables are correctly set
+- Verify your MongoDB connection string is correct
+
 ## Usage Guide  
 
 1. **Sign Up**  
