@@ -219,8 +219,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Sachin Kiragi - Lead Developer  
 - Ashutosh Naryagol - Developer  
-- Shailesh Pawale - Developer  
-- Kadappa Savalagi - Developer  
+ 
 
 ## Troubleshooting  
 
